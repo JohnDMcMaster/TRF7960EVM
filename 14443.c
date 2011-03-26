@@ -5,6 +5,9 @@
  =======================================================================================================================
  */
 
+/*
+Select command activates a device
+*/
 char SelectCommand(unsigned char select, unsigned char *UID)
 {
 	/*~~~~~~~~~~~~~~~~~~~~*/
@@ -12,32 +15,52 @@ char SelectCommand(unsigned char select, unsigned char *UID)
 	char			ret = 0;
 	/*~~~~~~~~~~~~~~~~~~~~*/
 
-	buf[50] = ISOControl;	/* enable RX CRC calculation */
+	/* enable RX CRC calculation */
+	buf[50] = ISOControl;	
+	/*
+	RX CRC
+	Output is sub-carrier data
+	RFID mode = ISO14443A bit rate 106 kbps
+	*/
 	buf[51] = 0x08;
 	WriteSingle(&buf[50], 2);
 
-	for(j = 0; j < 5; j++) buf[j + 7] = *(UID + j);
+
+
+	/*
+	*/
 	buf[0] = 0x8f;
-	buf[1] = 0x91;			/* buffer setup for FIFO writing */
+	/* buffer setup for FIFO writing */
+	buf[1] = 0x91;			
 	buf[2] = 0x3d;
 	buf[3] = 0x00;
 	buf[4] = 0x70;
 	buf[5] = select;
 	buf[6] = 0x70;
+	for(j = 0; j < 5; j++) {
+		buf[j + 7] = *(UID + j);
+	}
+	/* send the request using RAW writing */
+	RAWwrite(buf, 12);		
 
-	RAWwrite(buf, 12);		/* send the request using RAW writing */
 
-	/* Write 12 bytes the first time you write to FIFO */
-	i_reg = 0x01;
-	RXTXstate = 1;			/* the response will be stored in buf[1] upwards */
 
 	/*
-	 * LPM0;
-	 * //wait for end of transmit
-	 */
-	while(i_reg == 0x01)
-	{
+	Write 12 bytes the first time you write to FIFO
+	*/
+	i_reg = 0x01;
+	/*
+	the response will be stored in buf[1] upwards
+	*/
+	RXTXstate = 1;			
+	/*
+	LPM0
+	Wait for end of transmit
+	*/
+	while(i_reg == 0x01) {
 	}
+
+
 
 	i_reg = 0x01;
 
@@ -45,47 +68,45 @@ char SelectCommand(unsigned char select, unsigned char *UID)
 	countValue = 0x2000;	/* 10ms for TIMEOUT */
 	startCounter;			/* start timer up mode */
 
-	while(i_reg == 0x01)
-	{
+	while(i_reg == 0x01) {
 	}						/* wait for RX complete */
 
-	if(!POLLING)
-	{
-		if(i_reg == 0xFF)
-		{					/* recieved response */
-			if((buf[1] & BIT2) == BIT2)
-			{				/* UID not complete */
+
+
+	if(!POLLING) {
+		//recieved response
+		if(i_reg == 0xFF) {					
+			//UID not complete
+			if((buf[1] & BIT2) == BIT2) {				
 				kputchar('(');
-				for(j = 1; j < RXTXstate; j++)
-				{
+				for(j = 1; j < RXTXstate; j++) {
 					Put_byte(buf[j]);
-				}			/* for */
+				}
 
 				kputchar(')');
 				ret = 1;
 				goto FINISH;
 			}
-			else
-			{				/* UID complete */
+			//UID complete
+			else {				
 				kputchar('[');
-				for(j = 1; j < RXTXstate; j++)
-				{
+				for(j = 1; j < RXTXstate; j++) {
 					Put_byte(buf[j]);
-				}			/* for */
+				}			/* for */  //what an insightful comment
 
 				kputchar(']');
 				ret = 0;
 				goto FINISH;
 			}
 		}
-		else if(i_reg == 0x02)
-		{					/* collision occured */
+		//collision occured
+		else if(i_reg == 0x02) {					
 			kputchar('[');
 			kputchar('z');
 			kputchar(']');
 		}
-		else if(i_reg == 0x00)
-		{					/* timer interrupt */
+		//timer interrupt
+		else if(i_reg == 0x00) {					
 			kputchar('[');
 			kputchar(']');
 		}
@@ -111,9 +132,16 @@ void AnticollisionLoopA(unsigned char select, unsigned char NVB, unsigned char *
 	unsigned char	NvBytes = 0, NvBits = 0, Xbits, found = 0;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	buf[50] = ISOControl;			/* disable RX CRC calculation */
+	//disable RX CRC calculation
+	buf[50] = ISOControl;			
+	/*
+	RX no CRC
+	Output is sub-carrier data
+	RFID mode = ISO14443A bit rate 106 kbps
+	*/
 	buf[51] = 0x88;
 	WriteSingle(&buf[50], 2);
+
 
 	RXErrorFlag = 0;
 	CollPoss = 0;
@@ -168,8 +196,10 @@ void AnticollisionLoopA(unsigned char select, unsigned char NVB, unsigned char *
 	{	/* wait for end of RX or timeout */
 		i++;
 		CounterSet();
-		countValue = 0x2710;						/* 10ms for TIMEOUT */
-		startCounter;								/* start timer up mode */
+		//10ms for TIMEOUT
+		countValue = 0x2710;						
+		//start timer up mode
+		startCounter;								
 		LPM0;
 	}
 

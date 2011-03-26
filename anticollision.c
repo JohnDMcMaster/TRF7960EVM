@@ -288,10 +288,21 @@ unsigned char RequestCommand(unsigned char *pbuf, unsigned char lenght, unsigned
 
 	RXTXstate = lenght; /* RXTXstate global wariable is the main transmit counter */
 
+	/*
+	Reset command?
+	Shouldn't have args then or at least I don't understand what they do
+	Think the rest go direclty into the FIFO
+	*/
 	*pbuf = 0x8f;
+	/*
+	What if this was a command?
+	*/
+	//idle?
 	if(noCRC) *(pbuf + 1) = 0x90;	/* buffer setup for FIFO writing */
+	//not a command...so no
 	else
 		*(pbuf + 1) = 0x91;			/* buffer setup for FIFO writing */
+	//Continuous write to FIFO (1F)?
 	*(pbuf + 2) = 0x3d;
 	*(pbuf + 3) = RXTXstate >> 4;
 	*(pbuf + 4) = (RXTXstate << 4) | brokenBits;

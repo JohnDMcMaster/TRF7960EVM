@@ -605,6 +605,9 @@ void HostCommands ()
 			buf[1] = 0x88;	/* recieve with no CRC */
 			WriteSingle(buf, 2);
 
+			/*
+			REQA pg 14 of ISO standard
+			*/
 			buf[5] = 0x26;	/* send REQA command */
 			if(RequestCommand(&buf[0], 0x00, 0x0f, 1) == 0)
 			{
