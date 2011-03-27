@@ -10,7 +10,8 @@ void TIInventoryRequest(unsigned char *mask, unsigned char length)	/* host comma
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
-	unsigned char	i = 1, j = 3, command, found = 0,command3[2];
+	unsigned char	i = 1, j = 3, command, found = 0;
+	//command3[2];
 	unsigned char	*PslotNo, slotNo[17];
 	unsigned char	NewMask[8], Newlength, masksize;
 	int				size;

@@ -268,7 +268,7 @@ void AnticollisionLoopA(unsigned char select, unsigned char NVB, unsigned char *
 						{
 							if(i < (NvBytes - 1))	/* Combine the known bytes and the */
 								Put_byte(*(UID + i + 1));	/* recieved bytes to a whole UID. */
-							else if(i = (NvBytes - 1))
+							else if(i == (NvBytes - 1))
 								Put_byte((buf[i + 2 - NvBytes] &~NvBits) | (*(UID + i + 1) & NvBits));
 							else
 								Put_byte(buf[i + 2 - NvBytes]);
@@ -602,10 +602,10 @@ void SlotMarkerCommand(unsigned char number)
 	i_reg = 0x01;
 
 	RAWwrite(&buf[0], 6);
-	irqCLR;			///* PORT2 interrupt flag clear
+	irqCLR;			// PORT2 interrupt flag clear
 	irqON;
-	CounterSet();	///* TimerA set
-	countValue = 0x4E20;	///* 20ms
+	CounterSet();	// TimerA set
+	countValue = 0x4E20;	// 20ms
 
 	startCounter;
 	while(i_reg == 0x01)
@@ -659,7 +659,8 @@ void SlotMarkerCommand(unsigned char number)
 void AnticollisionSequenceB(unsigned char command, unsigned char slots)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	unsigned char	i, collision = 0x00, j, found = 0,command3[2];
+	unsigned char	i, collision = 0x00, j, found = 0;
+	//unsigned char command3[2];
 	unsigned int	k = 0;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -734,7 +735,7 @@ void AnticollisionSequenceB(unsigned char command, unsigned char slots)
 
 
 		while(i_reg == 0x01)
-		{					///* wait for RX complete
+		{					// wait for RX complete
 			k++;
 		      if(k == 0xFFF0)
 

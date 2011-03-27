@@ -1,7 +1,7 @@
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 
-#include <MSP430x23x0.h>     	//can't be greater than 256+13 	
+#include <msp430x23x0.h>     	//can't be greater than 256+13 	
 #include <stdio.h>
 #include "hardware.h"
 #include "globals.h"

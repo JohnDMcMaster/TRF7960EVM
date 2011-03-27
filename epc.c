@@ -13,7 +13,7 @@
 void BeginRound(unsigned char MaskLenght, unsigned char *Mask, unsigned char slotNo)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-	unsigned char	ByteNumber, command, i, j;
+	unsigned char	ByteNumber, command, i = 0, j = 0;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 	ByteNumber = 3 + (MaskLenght >> 3); /* nuber of complete bytes */

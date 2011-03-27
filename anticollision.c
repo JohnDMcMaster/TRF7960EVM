@@ -13,7 +13,6 @@ void EnableSlotCounter(void)
 	ReadSingle(&buf[41], 1);
 	buf[41] |= BIT0;	/* set BIT0 in register 0x01 */
 	WriteSingle(&buf[40], 2);
-
 }
 
 /*
@@ -53,7 +52,7 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
 
 
 
-         //added code
+	//added code
 
 	buf[0] = ModulatorControl;
 	buf[1] = 0x21;

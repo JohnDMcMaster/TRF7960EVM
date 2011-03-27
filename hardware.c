@@ -80,8 +80,7 @@ void OSCsel(unsigned char mode)
  =======================================================================================================================
  */
 
-#pragma vector=TIMERA0_VECTOR
-__interrupt void TimerAhandler(void)
+interrupt (TIMERA0_VECTOR) TimerAhandler(void)
 {	
 	//unsigned char Register;
           unsigned char Register[2];

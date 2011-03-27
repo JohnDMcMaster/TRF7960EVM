@@ -39,7 +39,7 @@
 #define DBG		0
 
 //Processor specific definitions
-#include <MSP430x23x0.h>     	
+#include <msp430x23x0.h>
 #include <stdlib.h>		
 #include <stdio.h>
 #include "hardware.h"
@@ -68,7 +68,7 @@ unsigned char CollPoss;
 // Main function with init and an endless loop
 //
 //
-void main(void) {
+int main(void) {
 	// initialize peripherals
 	WDTCTL = WDTPW + WDTHOLD;             // Stop WDT
 
@@ -145,6 +145,7 @@ void main(void) {
 
 	POLLING = 1;
 	FindTags(0x00);
+	return 0;
 }
 
 

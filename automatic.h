@@ -1,7 +1,9 @@
+#ifndef AUTOMATIC_H
+#define AUTOMATIC_H
 //-----------------------------------------------------------
 //Header file for automatic tag detection
 
-#include <MSP430x23x0.h> 	
+#include <msp430x23x0.h>
 #include <stdio.h>
 #include "hardware.h"
 #include "globals.h"
@@ -16,4 +18,6 @@
 
 unsigned char FindTags(unsigned char protocol);
 extern unsigned char protocol;
+
+#endif
 

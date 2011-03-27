@@ -1,3 +1,5 @@
+#ifndef PARALLEL_H
+#define PARALLEL_H
 //-----------------------------------------------------------
 //-----------------------------------------------------------
 
@@ -5,8 +7,9 @@
 //#ifndef SPI_BITBANG
 //#define SPI_BITBANG
 
-
-#include <MSP430x23x0.h>     	//can't be greater than 256+13 	
+//can't be greater than 256+13 	
+//me: what can't...?
+#include <msp430x23x0.h>
 #include <stdio.h>
 #include "hardware.h"
 #include "globals.h"
@@ -54,11 +57,12 @@ void InterruptHandlerReader(unsigned char *Register);
 void InterruptHandlerNFC(unsigned char Register);
 void InterruptHandlerNFCtarget(unsigned char Register);
 
-#pragma vector=PORT2_VECTOR
-__interrupt void Port_B(void);
+interrupt (PORT2_VECTOR) Port_B(void);
 
 
 
 
 
 //#endif      // SPI_BITBANG
+#endif
+

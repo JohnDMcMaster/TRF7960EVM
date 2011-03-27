@@ -108,7 +108,7 @@ void SPIStopCondition(void)
 void WriteSingle(unsigned char*pbuf, unsigned char lenght)
 {
 	/*~~~~~~~~~~~~~~*/
-	unsigned char	i,j;
+	unsigned char	i;
 	/*~~~~~~~~~~~~~~*/
 
 	if ((SPIMODE)==0)  //Parallel Mode
@@ -174,8 +174,6 @@ void WriteSingle(unsigned char*pbuf, unsigned char lenght)
 void WriteCont(unsigned char*pbuf, unsigned char lenght)
 {
 	/*~~~~~~~~~~~~~~*/
-	unsigned char	j;
-	/*~~~~~~~~~~~~~~*/
 	//Parallel Mode
 	if ((SPIMODE)==0) 
 	{	
@@ -235,7 +233,7 @@ void WriteCont(unsigned char*pbuf, unsigned char lenght)
 void ReadSingle(unsigned char*pbuf, unsigned char lenght)
 {
 	/*~~~~~~~~~~~~~~*/
-	unsigned char	j,temp;
+	unsigned char	temp;
 	/*~~~~~~~~~~~~~~*/
 
 	if ((SPIMODE)==0)
@@ -443,8 +441,6 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 void DirectCommand(unsigned char*pbuf)
 {
 	/*~~~~~~~~~~~~~~*/
-	unsigned char	j;
-	/*~~~~~~~~~~~~~~*/
 	if ((SPIMODE)==0)	//Parallel Mode
 	{
 		STARTcondition();
@@ -493,8 +489,6 @@ void DirectCommand(unsigned char*pbuf)
 */
 void RAWwrite(unsigned char*pbuf, unsigned char lenght)
 {
-	/*~~~~~~~~~~~~~~*/
-	unsigned char	j;
 	/*~~~~~~~~~~~~~~*/
 	if ((SPIMODE)==0) //Parallel Mode
 	{
@@ -558,7 +552,6 @@ void RAWwrite(unsigned char*pbuf, unsigned char lenght)
 */
 void DirectMode(void)
 {
-	unsigned char	j;
 	if ((SPIMODE)==0)//Parallel Mode
 	{
 		OOKdirOUT;
@@ -939,8 +932,7 @@ void InterruptHandlerReader(unsigned char*Register)
  =======================================================================================================================
 */
 
-#pragma vector = PORT2_VECTOR
-__interrupt void Port_B (void)		/* interrupt handler*/
+interrupt (PORT2_VECTOR) Port_B(void)		/* interrupt handler*/
 {
 	unsigned char Register[4];
 

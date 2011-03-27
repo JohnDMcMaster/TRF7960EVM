@@ -7,6 +7,9 @@
 #define BUF_LENGTH 300		//Number of characters in a frame
 #define EnableInterrupts _EINT()
 
+//From mifare code
+#define __low_power_mode_off_on_exit() __bic_SR_register_on_exit(CPUOFF | SCG0 | SCG1 | OSCOFF)
+
 extern char rxdata;			//RS232 RX data byte
 extern unsigned char buf[BUF_LENGTH];
 extern signed char RXTXstate;	//used for transmit recieve byte count

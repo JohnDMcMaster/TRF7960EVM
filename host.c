@@ -231,7 +231,7 @@ unsigned char Get_nibble(void)
 {
 	/*~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	reading;
-	unsigned char	rxdata;
+	unsigned char	rxdata = 0;
 	/*~~~~~~~~~~~~~~~~~~~~*/
 
 	reading = 1;				/* flag: reading not yet finished */
@@ -326,7 +326,7 @@ unsigned char Get_line(unsigned char *pline)
 			{									/* is there a char to delete? */
 				pos--;							/* remove it from buffer */
 				put_bksp();						/* go back and erase on screen */
-				if(pos & 0x01 > 0)
+				if((pos & 0x01) > 0)
 				{								/* (high) even byte */
 					*pline--;
 					*pline &= 0xF0;				/* clear lo nibble */
@@ -396,42 +396,40 @@ unsigned char Get_line(unsigned char *pline)
 //////////////////////////////////////////////////////////////////
 //Common Interrupt RX Vector for both USCIA - UART & USCIB - SPI
 
-#pragma vector = USCIAB0RX_VECTOR
-__interrupt void RXhandler (void)
+interrupt (USCIAB0RX_VECTOR) RXhandler(void)
 {
-   if (IFG2 & UCA0RXIFG)  //UART
-   {	rxdata = UCA0RXBUF;
-	RXdone = 1;
-	if(ENABLE == 0)
-	{
-		TRFEnable;
-		BaudSet(0x01);
-		OSCsel(0x01);
-		InitialSettings();
-		send_cstring("Reader enabled.");
-		ENABLE = 1;
-	}
-	__low_power_mode_off_on_exit();
+	if (IFG2 & UCA0RXIFG)  //UART
+	{	rxdata = UCA0RXBUF;
+		RXdone = 1;
+		if(ENABLE == 0)
+		{
+			TRFEnable;
+			BaudSet(0x01);
+			OSCsel(0x01);
+			InitialSettings();
+			send_cstring("Reader enabled.");
+			ENABLE = 1;
+		}
+		__low_power_mode_off_on_exit();
 
-	if(FirstSPIdata)
-	{
+		/*
+		//mifare code seems to get away with doing this, lets try it
+		if(FirstSPIdata)
+		{
 		irqOFF;
 		stopCounter;
 		asm("mov.w #HostCommands,10(SP)");
-                // This manipulation of SP is needed so that the control transfers to the
-                //HostCommand function after the interrupt return
+		// This manipulation of SP is needed so that the control transfers to the
+		//HostCommand function after the interrupt return
+		}
+		*/
 	}
-
-   }
-
-
-//   else if (IFG2 & UCB0RXIFG)  //SPI
- //  {
- //    unsigned char dontcare;
- //    dontcare=UCB0RXBUF;
- //    Do Nothing
- //  }
-
+	//   else if (IFG2 & UCB0RXIFG)  //SPI
+	//  {
+	//    unsigned char dontcare;
+	//    dontcare=UCB0RXBUF;
+	//    Do Nothing
+	//  }
 }					/* RXhandler */
 
 /////////////////////////////////////////////////////////////////

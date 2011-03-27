@@ -1,8 +1,11 @@
+#ifndef HARDWARE_H
+#define HARDWARE_H
 //----------------------------------------------//
 //Here are the processor specific functions.	//
 //						//
 //----------------------------------------------//
-#include <MSP430x23x0.h>     		
+#include <msp430x23x0.h>
+#include <signal.h>
 #include <stdio.h>
 #include "globals.h"
 
@@ -134,5 +137,6 @@ void delay_ms(unsigned int n_ms);
 void CounterSet(void);
 void OSCsel(unsigned char mode);
 
-#pragma vector=TIMERA0_VECTOR
-__interrupt void TimerAhandler(void);
+interrupt (TIMERA0_VECTOR) TimerAhandler(void);
+#endif
+

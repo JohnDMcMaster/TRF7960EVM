@@ -1,10 +1,13 @@
+#ifndef HOST_H
+#define HOST_H
 //----------------------------------
 //Header file with functions for
 //host communication.
 //It uses the hardware USART
 //in the MSP430.
 //----------------------------------
-#include <MSP430x23x0.h>     	//can't be greater than 256+13
+#include <signal.h>
+#include <msp430x23x0.h>     	//can't be greater than 256+13
 #include <stdio.h>
 #include "hardware.h"
 #include "globals.h"
@@ -30,8 +33,7 @@ unsigned char Get_nibble(void);
 unsigned char Get_line (unsigned char *pline);
 void HostCommands(void);
 
-#pragma vector=USCIAB0RX_VECTOR
-__interrupt void RXhandler(void);
+interrupt (USCIAB0RX_VECTOR) RXhandler(void);
+interrupt (USCIAB0TX_VECTOR) TXhandler(void);
+#endif
 
-#pragma vector = USCIAB0TX_VECTOR
-__interrupt void TXhandler (void);
