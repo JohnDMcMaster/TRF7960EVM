@@ -19,14 +19,14 @@
 //    of registers with specified addresses ;
 // =======================================================================================================================
 
-void SPIWriteSingle(unsigned char *pbuf, unsigned char lenght)
+void SPIWriteSingle(unsigned char *pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~*/
 	unsigned char	i;
 	/*~~~~~~~~~~~~~~*/
 
 	//STARTcondition();
-	while(lenght > 0)
+	while(length > 0)
 	{
 		*pbuf = (0x1f &*pbuf);	/* register address */
 
@@ -37,7 +37,7 @@ void SPIWriteSingle(unsigned char *pbuf, unsigned char lenght)
 			clkON;
 			clkOFF;
 			pbuf++;
-			lenght--;
+			length--;
 		}
 	}	/* while */
 
@@ -50,18 +50,18 @@ void SPIWriteSingle(unsigned char *pbuf, unsigned char lenght)
     a specified address upwards ;
  =======================================================================================================================
  */
-void SPIWriteCont(unsigned char *pbuf, unsigned char lenght)
+void SPIWriteCont(unsigned char *pbuf, unsigned char length)
 {
 	//STARTcondition();
 	*pbuf = (0x20 | *pbuf); /* address, write, continous */
 	*pbuf = (0x3f &*pbuf);	/* register address */
-	while(lenght > 0)
+	while(length > 0)
 	{
 		TRFWrite = *pbuf;	/* send command */
 		clkON;
 		clkOFF;
 		pbuf++;
-		lenght--;
+		length--;
 	}						/* while */
 
 	//STOPcont();
@@ -72,10 +72,10 @@ void SPIWriteCont(unsigned char *pbuf, unsigned char lenght)
     Function reads only one register ;
  =======================================================================================================================
  */
-void SPIReadSingle(unsigned char *pbuf, unsigned char lenght)
+void SPIReadSingle(unsigned char *pbuf, unsigned char length)
 {
 	//STARTcondition();
-	while(lenght > 0)
+	while(length > 0)
 	{
 		*pbuf = (0x40 | *pbuf); /* address, read, single */
 		*pbuf = (0x5f &*pbuf);	/* register address */
@@ -94,7 +94,7 @@ void SPIReadSingle(unsigned char *pbuf, unsigned char lenght)
 		TRFDirOUT;
 
 		pbuf++;
-		lenght--;
+		length--;
 	}	/* while */
 
 	//STOPcondition();
@@ -106,7 +106,7 @@ void SPIReadSingle(unsigned char *pbuf, unsigned char lenght)
     specified address upwards. ;
  =======================================================================================================================
  */
-void SPIReadCont(unsigned char *pbuf, unsigned char lenght)
+void SPIReadCont(unsigned char *pbuf, unsigned char length)
 {
 	//STARTcondition();
 	*pbuf = (0x60 | *pbuf); /* address, read, continous */
@@ -119,7 +119,7 @@ void SPIReadCont(unsigned char *pbuf, unsigned char lenght)
 	/*
 	 * TRFWrite = 0x00;
 	 */
-	while(lenght > 0)
+	while(length > 0)
 	{
 		clkON;
 
@@ -134,7 +134,7 @@ void SPIReadCont(unsigned char *pbuf, unsigned char lenght)
 		 */
 		clkOFF;
 		pbuf++;
-		lenght--;
+		length--;
 	}						/* while */
 
 	//STOPcont();
@@ -161,16 +161,16 @@ void SPIDirectCommand(unsigned char *pbuf)
     Function used for direct writing to reader chip ;
  =======================================================================================================================
  */
-void SPIRAWwrite(unsigned char *pbuf, unsigned char lenght)
+void SPIRAWwrite(unsigned char *pbuf, unsigned char length)
 {
 	//STARTcondition();
-	while(lenght > 0)
+	while(length > 0)
 	{
 		TRFWrite = *pbuf;	/* send command */
 		clkON;
 		clkOFF;
 		pbuf++;
-		lenght--;
+		length--;
 	}						/* while */
 
 	//STOPcont();

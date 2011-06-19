@@ -1,3 +1,10 @@
+/*
+trf7960evm port
+Original code Copyright (C) 2006-2007 Texas Instruments, Inc.
+Modifications copyright 2011 John McMaster <JohnDMcMaster@gmail.com>
+See COPYING for details
+*/
+
 #include "hardware.h"
 #include "parallel.h"
 #include "SPI.h"
@@ -53,7 +60,7 @@ void USARTset(void)  //Uses USCI_B0
   P3SEL |= BIT1 + BIT2 + BIT3;                            // P3.1,3.2,3.3 UCB0SIMO,UCB0SOMI,UCBOCLK option select
 
   SlaveSelectPortSet  // P3.0 - Slave Select
-  SlaveSelectHIGH     // Slave Select - inactive ( high)
+  SlaveSelectHIGH     // Slave Select - inactive ( high )
 
   UCB0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 
@@ -75,30 +82,30 @@ void USARTset(void)  //Uses USCI_B0
 void USARTEXTCLKset(void)  //Uses USCI_B0
 {
 
-    UCB0CTL1 |= UCSWRST;                     // Disable USCI first
-    UCB0CTL0 |= UCCKPH + UCMSB + UCMST + UCSYNC;  // 3-pin, 8-bit SPI master
+	UCB0CTL1 |= UCSWRST;                     // Disable USCI first
+	UCB0CTL0 |= UCCKPH + UCMSB + UCMST + UCSYNC;  // 3-pin, 8-bit SPI master
 
 
-  UCB0CTL1 |= UCSSEL_2;                     // SMCLK
-  //UCB0BR0 = 0x02;
-  UCB0BR0 = 0x00;
-  UCB0BR1 = 0;
+	UCB0CTL1 |= UCSSEL_2;                     // SMCLK
+	//UCB0BR0 = 0x02;
+	UCB0BR0 = 0x00;
+	UCB0BR1 = 0;
 
 
-  P3SEL |= BIT1 + BIT2 + BIT3;                            // P3.1,3.2,3.3 UCB0SIMO,UCB0SOMI,UCBOCLK option select
+	P3SEL |= BIT1 + BIT2 + BIT3;                            // P3.1,3.2,3.3 UCB0SIMO,UCB0SOMI,UCBOCLK option select
 
-  SlaveSelectPortSet  // P3.0 - Slave Select
-  SlaveSelectHIGH     // Slave Select - inactive ( high)
+	SlaveSelectPortSet  // P3.0 - Slave Select
+	SlaveSelectHIGH     // Slave Select - inactive ( high )
 
-  UCB0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
+	UCB0CTL1 &= ~UCSWRST;                     // **Initialize USCI state machine**
 
- // IE2 |= UCB0RXIE + UCB0TXIE;	/* transmitter and reciever enable */
+	// IE2 |= UCB0RXIE + UCB0TXIE;	/* transmitter and reciever enable */
 
-//  IE2 |= UCB0RXIE ;	/*  reciever enable */
+	//  IE2 |= UCB0RXIE ;	/*  reciever enable */
 
-  //Harsha - code added
- // IFG2 &= ~UCB0RXIFG; //Clear Interrupt flag first
- // UCB0TXBUF=0x00; //dummy write to clear IFG
+	//Harsha - code added
+	// IFG2 &= ~UCB0RXIFG; //Clear Interrupt flag first
+	// UCB0TXBUF=0x00; //dummy write to clear IFG
 
 }
 
@@ -109,9 +116,9 @@ void USARTEXTCLKset(void)  //Uses USCI_B0
  */
 
 
-void BaudSet(unsigned char mode)
+void BaudSet(unsigned char mode )
 {
-	if(mode == 0x00)
+	if( mode == 0x00 )
 	{
 		UCA0BR0 = BAUD0;	/* baud rate register */
 		UCA0BR1 = BAUD1;
@@ -128,7 +135,7 @@ void BaudSet(unsigned char mode)
  =======================================================================================================================
  */
 
-void kputchar(char TXchar)
+void kputchar(char TXchar )
 {
 	while(!(IFG2 & UCA0TXIFG));
 
@@ -141,7 +148,7 @@ void kputchar(char TXchar)
  =======================================================================================================================
  */
 
-void put_bksp(void)
+void put_bksp( void )
 {
 	kputchar('\b');
 	kputchar(' ');
@@ -153,7 +160,7 @@ void put_bksp(void)
  =======================================================================================================================
  */
 
-void put_space(void)
+void put_space( void )
 {
 	kputchar(' ');
 }	/* put_space */
@@ -163,7 +170,7 @@ void put_space(void)
  =======================================================================================================================
  */
 
-void put_crlf(void)
+void put_crlf( void )
 {
 	kputchar('\r');
 	kputchar('\n');
@@ -174,9 +181,9 @@ void put_crlf(void)
     Send a character string to USART ;
  =======================================================================================================================
  */
-void send_cstring(char *pstr)
+void send_cstring( char *pstr )
 {
-	while(*pstr != '\0')
+	while(*pstr != '\0' )
 	{
 		kputchar(*pstr++);
 	}
@@ -187,15 +194,18 @@ void send_cstring(char *pstr)
     convert a nibble to ASCII hex byte ;
  =======================================================================================================================
  */
-unsigned char Nibble2Ascii(unsigned char anibble)
+unsigned char Nibble2Ascii( unsigned char anibble )
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	AsciiOut = anibble;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	if(anibble > 9) /* If req ASCII A-F then add 7(hex) */
+	/* If req ASCII A-F then add 7(hex) */
+	if( anibble > 9 )
+	{
 		AsciiOut = AsciiOut + 0x07;
-
+	}
+	
 	/* Add offset to convert to Ascii */
 	AsciiOut = AsciiOut + 0x30;
 
@@ -207,7 +217,7 @@ unsigned char Nibble2Ascii(unsigned char anibble)
     end of Nibble2Ascii output a binary coded byte as two hex coded ascii bytes ;
  =======================================================================================================================
  */
-void Put_byte(unsigned char abyte)
+void Put_byte( unsigned char abyte )
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	temp1, temp2;
@@ -227,7 +237,7 @@ void Put_byte(unsigned char abyte)
     end of Put_byte get a hex coded nibble
  =======================================================================================================================
  */
-unsigned char Get_nibble(void)
+unsigned char Get_nibble( void )
 {
 	/*~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	reading;
@@ -235,20 +245,20 @@ unsigned char Get_nibble(void)
 	/*~~~~~~~~~~~~~~~~~~~~*/
 
 	reading = 1;				/* flag: reading not yet finished */
-	while(reading)
+	while(reading )
 	{							/* loop and read characters */
 		LPM0;					/* sync, wakeup by irq */
-		if(rxdata >= 'a')
+		if( rxdata >= 'a' )
 		{
 			rxdata -= 32;
 		}						/* change to uppercase */
 
 		/* echo if hex */
-		if(((rxdata >= '0') && (rxdata <= '9')) || ((rxdata >= 'A') && (rxdata <= 'F')))
+		if( ((rxdata >= '0') && (rxdata <= '9')) || ((rxdata >= 'A') && (rxdata <= 'F')) )
 		{
 			reading = 0;
 			kputchar(rxdata);	/* echo */
-			if(rxdata > '9')
+			if( rxdata > '9' )
 			{					/* If ASCII A-F then add 9 */
 				rxdata = (rxdata & 0x0F) + 9;
 			}
@@ -268,7 +278,7 @@ unsigned char Get_nibble(void)
     ignores other characters ;
  =======================================================================================================================
  */
-unsigned char Get_line(unsigned char *pline)
+unsigned char Get_line( unsigned char *pline )
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	reading, err_flg;
@@ -280,10 +290,10 @@ unsigned char Get_line(unsigned char *pline)
 	Length_Byte = 0xff;				/* assume max number of bytes */
 
 	/* wait for SOF: '0' followed by '1' */
-	if(!FirstSPIdata)
+	if( !FirstSPIdata )
 	{
 		LPM0;						/* sync, wakeup by irq */
-		while(rxdata != '0')
+		while(rxdata != '0' )
 		{
 		}
 	}
@@ -294,7 +304,7 @@ unsigned char Get_line(unsigned char *pline)
 
 	kputchar('0');
 	LPM0;										/* sync, wakeup by irq */
-	while(rxdata != '1')
+	while(rxdata != '1' )
 	{
 	}
 
@@ -304,13 +314,13 @@ unsigned char Get_line(unsigned char *pline)
 
 	pos = 0;									/* character position counter - 8bit */
 	reading = 1;								/* flag: reading not yet finished */
-	while(reading)
+	while(reading )
 	{											/* loop and read characters */
 		while(RXdone == 0);
 
 		/* sync, wakeup by irq */
 		RXdone = 0;
-		switch(rxdata)
+		switch(rxdata )
 		{
 		/* process RETURN key */
 		case '\r':
@@ -322,11 +332,11 @@ unsigned char Get_line(unsigned char *pline)
 
 		/* backspace */
 		case '\b':
-			if(pos > 0)
+			if( pos > 0 )
 			{									/* is there a char to delete? */
 				pos--;							/* remove it from buffer */
 				put_bksp();						/* go back and erase on screen */
-				if((pos & 0x01) > 0)
+				if( (pos & 0x01) > 0 )
 				{								/* (high) even byte */
 					*pline--;
 					*pline &= 0xF0;				/* clear lo nibble */
@@ -336,40 +346,40 @@ unsigned char Get_line(unsigned char *pline)
 
 		/* other characters */
 		default:
-			if(rxdata >= 'a')
+			if( rxdata >= 'a' )
 			{
 				rxdata -= 32;
 			}									/* change to uppercase */
 
 			/* discard if not hex */
-			if((rxdata < '0') || ((rxdata > '9') && (rxdata < 'A')) || (rxdata > 'F'))
+			if( (rxdata < '0') || ((rxdata > '9') && (rxdata < 'A')) || (rxdata > 'F') )
 			{
 				break;
 			}
 
 			/* only store characters if buffer has space */
-			if(pos++ < 2 * BUF_LENGTH)
+			if( pos++ < 2 * BUF_LENGTH )
 			{
 				kputchar(rxdata);				/* echo */
-				if(rxdata > '9')
+				if( rxdata > '9' )
 				{								/* If ASCII A-F then add 9 */
 					rxdata = (rxdata & 0x0F) + 9;
 				}
 
-				if((pos & 0x01) == 0)
+				if( (pos & 0x01) == 0 )
 				{								/* (low) odd nibble */
 					*pline += (rxdata & 0x0F);	/* store */
-					if(pos == 2)
+					if( pos == 2 )
 					{
 						/*
 						 * just finished receiving 2 nibbles containing number of expected data bytes ;
-						 * change Length_Bytes (total number of expected data bytes)
+						 * change Length_Bytes (total number of expected data bytes )
 						 */
 						Length_Byte = *pline;
 					}
 
 					pline++;
-					if(((Length_Byte - 1) * 2) == pos)
+					if( ((Length_Byte - 1) * 2) == pos )
 					{
 						reading = 0;			/* flag loop exit - done */
 					}
@@ -396,12 +406,12 @@ unsigned char Get_line(unsigned char *pline)
 //////////////////////////////////////////////////////////////////
 //Common Interrupt RX Vector for both USCIA - UART & USCIB - SPI
 
-interrupt (USCIAB0RX_VECTOR) RXhandler(void)
+interrupt (USCIAB0RX_VECTOR) RXhandler( void )
 {
 	if (IFG2 & UCA0RXIFG)  //UART
 	{	rxdata = UCA0RXBUF;
 		RXdone = 1;
-		if(ENABLE == 0)
+		if( ENABLE == 0 )
 		{
 			TRFEnable;
 			BaudSet(0x01);
@@ -414,7 +424,7 @@ interrupt (USCIAB0RX_VECTOR) RXhandler(void)
 
 		/*
 		//mifare code seems to get away with doing this, lets try it
-		if(FirstSPIdata)
+		if( FirstSPIdata )
 		{
 		irqOFF;
 		stopCounter;
@@ -438,9 +448,9 @@ interrupt (USCIAB0RX_VECTOR) RXhandler(void)
 //Common Interrupt TX Vector for both USCIA - UART & USCIB - SPI
 
 //#pragma vector = USCIAB0TX_VECTOR
-//__interrupt void TXhandler (void)
+//__interrupt void TXhandler (void )
 //{
-  /* if (IFG2 & UCB0TXIFG)
+  /* if (IFG2 & UCB0TXIFG )
    {
      //Do Nothing - Just RETI
    }*/
@@ -452,7 +462,7 @@ interrupt (USCIAB0RX_VECTOR) RXhandler(void)
 ///////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-void HostCommands ()
+void HostCommands( void )
 {
 	char *phello;
 
@@ -461,7 +471,7 @@ void HostCommands ()
 	POLLING = 0;
 
 	/* main loop, never ends */
-	while(1)
+	while(1 )
 	{
 		pbuf = &buf[0];
 		Get_line(pbuf);
@@ -470,34 +480,39 @@ void HostCommands ()
 		pbuf = &buf[4];
 		RXErrorFlag = 0;
 
-		if(*pbuf == 0xFF)
-		{			/* check COM port number */
+		//Hello request
+		if( *pbuf == 0xFF )
+		{			
 			phello = "TRF7960 EVM \r\n";
 			send_cstring(phello);
 		}
-		else if(*pbuf == 0x10)
-		{			/* register write (adress:data, adress:data, ...) */
+		/* register write (adress:data, adress:data, ...) */
+		else if( *pbuf == 0x10 )
+		{
 			send_cstring("Register write request.\r\n");
 			count = buf[0] - 8;
 			WriteSingle(&buf[5], count);
 		}
-		else if(*pbuf == 0x11)
-		{			/* continous write (adress:data, data, ...) */
+		/* continous write (adress:data, data, ...) */
+		else if( *pbuf == 0x11 )
+		{
 			phello = "Continous write request.\r\n";
 			send_cstring(phello);
 			count = buf[0] - 8;
 			WriteCont(&buf[5], count);
 		}
-		else if(*pbuf == 0x12)
-		{			/* register read (adress:data, adress:data, ...) */
+		/* register read (adress:data, adress:data, ...) */
+		else if( *pbuf == 0x12 )
+		{			
 			phello = "Register read request.\r\n";
 			send_cstring(phello);
 			count = buf[0] - 8;
 			ReadSingle(&buf[5], count);
 			Response(&buf[5], count);
 		}
-		else if(*pbuf == 0x13)
-		{			/* continous read (adress:data, data, ...) */
+		/* continous read (adress:data, data, ...) */
+		else if( *pbuf == 0x13 )
+		{
 			send_cstring("Continous read request\r\n");
 			pbuf++;
 			count = *pbuf;					/* the amount of registers to be read */
@@ -510,36 +525,41 @@ void HostCommands ()
 			ReadCont(&buf[5], count);
 			Response(&buf[5], count);
 		}
-		else if(*pbuf == 0x14)
-		{									/* inventory request */
+		/* inventory request */
+		else if( *pbuf == 0x14 )
+		{
 			phello = "ISO 15693 Inventory request.\r\n";
 			send_cstring(phello);
 			flags = buf[5];
 			for(count = 0; count < 8; count++) buf[count + 20] = 0x00;
 			InventoryRequest(&buf[20], 0x00);
 		}
-		else if(*pbuf == 0x15)
-		{									/* direct command */
+		/* direct command */
+		else if( *pbuf == 0x15 )
+		{									
 			phello = "Direct command.\r\n";
 			send_cstring(phello);
 			DirectCommand(&buf[5]);
 		}
-		else if(*pbuf == 0x16)
-		{									/* raw */
+		/* raw */
+		else if( *pbuf == 0x16 )
+		{									
 			phello = "RAW mode.\r\n";
 			send_cstring(phello);
 			count = buf[0] - 8;
 			RAWwrite(&buf[5], count);
 		}
-		else if(*pbuf == 0x18)
-		{									/* request code */
+		/* request code */
+		else if( *pbuf == 0x18 )
+		{									
 			phello = "Request mode.\r\n";
 			send_cstring(phello);
 			count = buf[0] - 8;
 			RequestCommand(&buf[0], count, 0x00, 0);
 		}
-		else if(*pbuf == 0x19)
-		{									/* testing 14443A - sending and recieving */
+		/* testing 14443A - sending and recieving */
+		else if( *pbuf == 0x19 )
+		{
 			/*
 			 * in different bitrates with changing ;
 			 * the ISOmode register after TX
@@ -549,55 +569,73 @@ void HostCommands ()
 			count = buf[0] - 9;
 			Request14443A(&buf[1], count, buf[5]);
 		}
-		
-		else if(*pbuf == 0x34)
-		{									/* SID poll */
+		/* SID poll */
+		else if( *pbuf == 0x34 )
+		{
 			phello = "Ti SID Poll.\r\n";
 			send_cstring(phello);
 			flags = buf[5];
 			for(count = 0; count < 4; count++) buf[count + 20] = 0x00;
 			TIInventoryRequest(&buf[20], 0x00);
 		}
-		
-		else if(*pbuf == 0x0F)
-		{									/* Direct mode */
+		/* Direct mode */
+		else if( *pbuf == 0x0F )
+		{									
 			phello = "Direct mode.\r\n";
 			send_cstring(phello);
 			DirectMode();
 		}
-		else if((*pbuf == 0xB0) || (*pbuf == 0xB1))
-		{									/* 0xB0 - REQB */
-			phello = "14443B REQB.\r\n";	/* 0xB1 - WUPB */
+		/* 0xB0 - REQB */
+		/* 0xB1 - WUPB */
+		else if( (*pbuf == 0xB0) || (*pbuf == 0xB1) )
+		{									
+			phello = "14443B REQB.\r\n";	
 			send_cstring(phello);
 			AnticollisionSequenceB(*pbuf, *(pbuf + 1));
                        // AnticollisionSequenceB(0xB0, 0x00); ///* single slot
 		}
-		else if((*pbuf == 0xA0) || (*pbuf == 0xA1))
-		{					/* 0xA0 - REQA */
+		/* 0xA0 - REQA */
+		else if( (*pbuf == 0xA0) || (*pbuf == 0xA1) )
+		{					
 			phello = "14443A REQA.\r\n";
 			send_cstring(phello);
 			AnticollisionSequenceA(*(pbuf + 1));
 		}
-		else if(*pbuf == 0xA2)
-		{					/* 0xA0 - REQA */
+		/* 0xA0 - REQA */
+		else if( *pbuf == 0xA2 )
+		{					
 			phello = "14443A Select.\r\n";
 			send_cstring(phello);
-			switch(buf[0])
+			switch(buf[0] )
 			{
+			//5 bytes
 			case 0x0D:
-				for(count = 1; count < 6; count++) buf[99 + count] = *(pbuf + count);
+				for(count = 1; count < 6; count++ )
+				{
+					buf[99 + count] = *(pbuf + count);
+				}
 				break;
 
 			case 0x11:
-				for(count = 1; count < 11; count++) buf[100 + count] = *(pbuf + count);
 				buf[100] = 0x88;
+				for(count = 1; count < 11; count++ )
+				{
+					buf[100 + count] = *(pbuf + count);
+				}
 				break;
 
 			case 0x15:
-				for(count = 1; count < 5; count++) buf[100 + count] = *(pbuf + count);
 				buf[100] = 0x88;
+				for(count = 1; count < 5; count++ )
+				{
+					buf[100 + count] = *(pbuf + count);
+				}
 				buf[105] = 0x88;
-				for(count = 1; count < 10; count++) buf[105 + count] = *(pbuf + count + 4);
+				//As far as I can tell, only the first 5 bytes are used
+				for(count = 1; count < 10; count++ )
+				{
+					buf[105 + count] = *(pbuf + count + 4);
+				}
 			}				/* switch */
 			buf[0] = ISOControl;
 			buf[1] = 0x88;	/* recieve with no CRC */
@@ -605,19 +643,26 @@ void HostCommands ()
 
 			/*
 			REQA pg 14 of ISO standard
+			Think these are the cascade levels
 			*/
 			buf[5] = 0x26;	/* send REQA command */
-			if(RequestCommand(&buf[0], 0x00, 0x0f, 1) == 0)
+			if( RequestCommand(&buf[0], 0x00, 0x0f, 1) == 0 )
 			{
-				if(SelectCommand(0x93, &buf[100]))
+				//buf[100]: 5 byte UID
+				if( SelectCommand(0x93, &buf[100]) )
 				{
-					if(SelectCommand(0x95, &buf[105])) SelectCommand(0x97, &buf[110]);
+					//buf[105]: 5 byte UID
+					if( SelectCommand(0x95, &buf[105]) )
+					{
+						SelectCommand(0x97, &buf[110]);
+					}
 				}
 			}
 		}
-		else if(*pbuf == 0x03)
-		{					/* enable or disable the reader chip */
-			if(*(pbuf + 1) == 0x00)
+		/* enable or disable the reader chip */
+		else if( *pbuf == 0x03 )
+		{					
+			if( *(pbuf + 1) == 0x00 )
 			{
 				/*
 				 * enable;
@@ -628,7 +673,7 @@ void HostCommands ()
 				 * ENABLE = 1;
 				 */
 			}
-			else if(*(pbuf + 1) == 0xFF)
+			else if( *(pbuf + 1) == 0xFF )
 			{
 				BaudSet(*(pbuf + 1));
 				OSCsel(*(pbuf + 1));
@@ -636,13 +681,13 @@ void HostCommands ()
 				send_cstring("Reader disabled.");
 				ENABLE = 0;
 			}
-			else if(*(pbuf + 1) == 0x0A)
+			else if( *(pbuf + 1) == 0x0A )
 			{
 				BaudSet(0x00);
 				OSCsel(0x00);
 				send_cstring("External clock.");
 			}
-			else if(*(pbuf + 1) == 0x0B)
+			else if( *(pbuf + 1) == 0x0B )
 			{
 				BaudSet(0x01);
 				OSCsel(0x01);
@@ -652,41 +697,45 @@ void HostCommands ()
 			{
 			}
 		}
-		else if(*pbuf == 0xF0)
-		{					/* AGC toggle */
+		/* AGC toggle */
+		else if( *pbuf == 0xF0 )
+		{					
 			buf[0] = ChipStateControl;
 			buf[1] = ChipStateControl;
 			ReadSingle(&buf[1], 1);
-			if(*(pbuf + 1) == 0xFF)
+			if( *(pbuf + 1) == 0xFF )
 				buf[1] |= BIT2;
 			else
 				buf[1] &= ~BIT2;
 			WriteSingle(buf, 2);
 		}
-		else if(*pbuf == 0xF1)
-		{					/* AM PM toggle */
+		/* AM PM toggle */
+		else if( *pbuf == 0xF1 )
+		{					
 			buf[0] = ChipStateControl;
 			buf[1] = ChipStateControl;
 			ReadSingle(&buf[1], 1);
-			if(*(pbuf + 1) == 0xFF)
+			if( *(pbuf + 1) == 0xFF )
 				buf[1] &= ~BIT3;
 			else
 				buf[1] |= BIT3;
 			WriteSingle(buf, 2);
 		}
-		else if(*pbuf == 0xF2)
-		{					/* Full - half power selection (FF - full power) */
+		/* Full - half power selection (FF - full power) */
+		else if( *pbuf == 0xF2 )
+		{					
 			buf[0] = ChipStateControl;
 			buf[1] = ChipStateControl;
 			ReadSingle(&buf[1], 1);
-			if(*(pbuf + 1) == 0xFF)
+			if( *(pbuf + 1) == 0xFF )
 				buf[1] &= ~BIT4;
 			else
 				buf[1] |= BIT4;
 			WriteSingle(buf, 2);
 		}
-		else if(*pbuf == 0xFE)
-		{					/* Firmware Version Number */
+		/* Firmware Version Number */
+		else if( *pbuf == 0xFE )
+		{					
 			phello = "Firmware Version 3.2.EXP.NOBB \r\n";
 			send_cstring(phello);
 		}
@@ -695,8 +744,10 @@ void HostCommands ()
 			phello = "Unknown command.\r\n";
 			send_cstring(phello);
 		}					/* end if */
-
-		while(!(IFG2 & UCA0TXIFG));
+		//Empty TX bytes before processing next
+		while( !(IFG2 & UCA0TXIFG) )
+		{
+		}
 	}						/* end while(1) */
 }	/* HostCommands */
 

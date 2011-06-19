@@ -38,22 +38,20 @@ void DisableSlotCounter(void)
     using the function PrintUIDs() at the end of this function. // ;
  =======================================================================================================================
  */
-void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command 0x14 */
+void InventoryRequest(unsigned char *mask, unsigned char length)	/* host command 0x14 */
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	/* 010800030414(req.packet)[00ff] */
 	unsigned char	i = 1, j = 3, command[2], NoSlots, found = 0;
 	unsigned char	*PslotNo, slotNo[17];
-	unsigned char	NewMask[8], NewLenght, masksize;
+	unsigned char	NewMask[8], Newlength, masksize;
 	int				size;
 	unsigned int	k = 0;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 
-
 	//added code
-
 	buf[0] = ModulatorControl;
 	buf[1] = 0x21;
 	WriteSingle(buf, 2);
@@ -90,13 +88,13 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
 
 	PslotNo = &slotNo[0];	/* slot number pointer */
 
-	masksize = (((lenght >> 2) + 1) >> 1);	/* masksize is 1 for lenght = 4 or 8 */
+	masksize = (((length >> 2) + 1) >> 1);	/* masksize is 1 for length = 4 or 8 */
 
 	/*
-	 * masksize is 2 for lenght = 12 or 16 ;
+	 * masksize is 2 for length = 12 or 16 ;
 	 * and so on
 	 */
-	size = masksize + 3;					/* mask value + mask lenght + command code + flags */
+	size = masksize + 3;					/* mask value + mask length + command code + flags */
 
 
 	buf[0] = 0x8f;
@@ -110,8 +108,8 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
         //optional AFI should be here
 
 
-	buf[7] = lenght;					/* masklenght */
-	if(lenght > 0)
+	buf[7] = length;					/* masklength */
+	if(length > 0)
 	{
 		for(i = 0; i < masksize; i++) buf[i + 8] = *(mask + i);
 	}									/* if */
@@ -245,9 +243,9 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
 		LED15693OFF;
 	}
 
-	NewLenght = lenght + 4; /* the mask lenght is a multiple of 4 bits */
+	Newlength = length + 4; /* the mask length is a multiple of 4 bits */
 
-	masksize = (((NewLenght >> 2) + 1) >> 1) - 1;
+	masksize = (((Newlength >> 2) + 1) >> 1) - 1;
 
 	while((*PslotNo != 0x00) && (NoSlots == 17))
 	{
@@ -255,7 +253,7 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
 
 		for(i = 0; i < 8; i++) NewMask[i] = *(mask + i);	/* first the whole mask is copied */
 
-		if((NewLenght & BIT2) == 0x00) *PslotNo = *PslotNo << 4;
+		if((Newlength & BIT2) == 0x00) *PslotNo = *PslotNo << 4;
 
 		/*
 		 * Put_byte(*PslotNo);
@@ -263,7 +261,7 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
 		 */
 		NewMask[masksize] |= *PslotNo;						/* the mask is changed */
 
-		InventoryRequest(&NewMask[0], NewLenght);			/* recursive call */
+		InventoryRequest(&NewMask[0], Newlength);			/* recursive call */
 
 		PslotNo--;
 	}	/* while */
@@ -279,13 +277,13 @@ void InventoryRequest(unsigned char *mask, unsigned char lenght)	/* host command
     Host command = 0x18 // ;
  =======================================================================================================================
  */
-unsigned char RequestCommand(unsigned char *pbuf, unsigned char lenght, unsigned char brokenBits, char noCRC)
+unsigned char RequestCommand(unsigned char *pbuf, unsigned char length, unsigned char brokenBits, char noCRC)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	index, j, command;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	RXTXstate = lenght; /* RXTXstate global wariable is the main transmit counter */
+	RXTXstate = length; /* RXTXstate global wariable is the main transmit counter */
 
 	/*
 	Reset command?
@@ -306,15 +304,15 @@ unsigned char RequestCommand(unsigned char *pbuf, unsigned char lenght, unsigned
 	*(pbuf + 3) = RXTXstate >> 4;
 	*(pbuf + 4) = (RXTXstate << 4) | brokenBits;
 
-	if(lenght > 12) lenght = 12;
+	if(length > 12) length = 12;
 
-	if(lenght == 0x00 && brokenBits != 0x00)
+	if(length == 0x00 && brokenBits != 0x00)
 	{
-		lenght = 1;
+		length = 1;
 		RXTXstate = 1;
 	}
 
-	RAWwrite(pbuf, lenght + 5);		/* send the request using RAW writing */
+	RAWwrite(pbuf, length + 5);		/* send the request using RAW writing */
 
 	/* Write 12 bytes the first time you write to FIFO */
 	irqCLR;					/* PORT2 interrupt flag clear */
@@ -330,7 +328,7 @@ unsigned char RequestCommand(unsigned char *pbuf, unsigned char lenght, unsigned
 		LPM0;				/* enter low power mode and exit on interrupt */
 		if(RXTXstate > 9)
 		{					/* the number of unsent bytes is in the RXTXstate global */
-			lenght = 10;	/* count variable has to be 10 : 9 bytes for FIFO and 1 address */
+			length = 10;	/* count variable has to be 10 : 9 bytes for FIFO and 1 address */
 		}
 		else if(RXTXstate < 1)
 		{
@@ -338,11 +336,11 @@ unsigned char RequestCommand(unsigned char *pbuf, unsigned char lenght, unsigned
 		}
 		else
 		{
-			lenght = RXTXstate + 1; /* all data has been sent out */
+			length = RXTXstate + 1; /* all data has been sent out */
 		}						/* if */
 
 		buf[index - 1] = FIFO;	/* writes 9 or less bytes to FIFO for transmitting */
-		WriteCont(&buf[index - 1], lenght);
+		WriteCont(&buf[index - 1], length);
 		RXTXstate = RXTXstate - 9;	/* write 9 bytes to FIFO */
 		index = index + 9;
 	}				/* while */

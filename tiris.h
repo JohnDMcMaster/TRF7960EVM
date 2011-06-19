@@ -16,6 +16,6 @@
 #include "globals.h"
 
 
-void TIInventoryRequest(unsigned char *mask, unsigned char lenght);
+void TIInventoryRequest(unsigned char *mask, unsigned char length);
 #endif
 

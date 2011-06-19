@@ -1,3 +1,10 @@
+/*
+trf7960evm
+Original code Copyright (C) 2006-2007 Texas Instruments, Inc.
+Modifications copyright 2011 John McMaster <JohnDMcMaster@gmail.com>
+See COPYING for details
+*/
+
 #include "parallel.h"
 #include "SPI.h"
 #include "globals.h"
@@ -105,7 +112,7 @@ void SPIStopCondition(void)
     of registers with specified addresses ;
  =======================================================================================================================
 */
-void WriteSingle(unsigned char*pbuf, unsigned char lenght)
+void WriteSingle(unsigned char*pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~*/
 	unsigned char	i;
@@ -114,7 +121,7 @@ void WriteSingle(unsigned char*pbuf, unsigned char lenght)
 	if ((SPIMODE)==0)  //Parallel Mode
 	{
 		STARTcondition();
-		while(lenght > 0)
+		while(length > 0)
 		{
 			*pbuf = (0x1f &*pbuf);	/* register address*/
 
@@ -125,7 +132,7 @@ void WriteSingle(unsigned char*pbuf, unsigned char lenght)
 				clkON;
 				clkOFF;
 				pbuf++;
-				lenght--;
+				length--;
 			}
 		}	/* while*/
 		STOPcondition();
@@ -142,7 +149,7 @@ void WriteSingle(unsigned char*pbuf, unsigned char lenght)
 
 		SlaveSelectLOW; //Start SPI Mode
 
-		while(lenght > 0)
+		while(length > 0)
 		{
 			*pbuf = (0x1f &*pbuf);	/* register address*/
 			for(i = 0; i < 2; i++)
@@ -157,7 +164,7 @@ void WriteSingle(unsigned char*pbuf, unsigned char lenght)
 				temp=UCB0RXBUF;
 
 				pbuf++;
-				lenght--;
+				length--;
 			}
 		}	/* while*/
 		SlaveSelectHIGH; //Stop SPI Mode
@@ -171,7 +178,7 @@ void WriteSingle(unsigned char*pbuf, unsigned char lenght)
     a specified address upwards ;
  =======================================================================================================================
 */
-void WriteCont(unsigned char*pbuf, unsigned char lenght)
+void WriteCont(unsigned char*pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~*/
 	//Parallel Mode
@@ -180,13 +187,13 @@ void WriteCont(unsigned char*pbuf, unsigned char lenght)
 		STARTcondition();
 		*pbuf = (0x20 |*pbuf); /* address, write, continous*/
 		*pbuf = (0x3f &*pbuf);	/* register address*/
-		while(lenght > 0)
+		while(length > 0)
 		{
 			TRFWrite =*pbuf;	/* send command*/
 			clkON;
 			clkOFF;
 			pbuf++;
-			lenght--;
+			length--;
 		}						/* while*/
 
 		STOPcont();
@@ -201,7 +208,7 @@ void WriteCont(unsigned char*pbuf, unsigned char lenght)
 	SlaveSelectLOW; //Start SPI Mode
 	*pbuf = (0x20 |*pbuf); /* address, write, continous*/
 	*pbuf = (0x3f &*pbuf);	/* register address*/
-	while(lenght > 0)
+	while(length > 0)
 	{
 		// USCI_B0 TX buffer ready?
 		while (!(IFG2 & UCB0TXIFG))
@@ -216,7 +223,7 @@ void WriteCont(unsigned char*pbuf, unsigned char lenght)
 		temp=UCB0RXBUF;
 
 		pbuf++;
-		lenght--;
+		length--;
 	}						/* while*/
 
 	SlaveSelectHIGH; //Stop SPI Mode
@@ -230,7 +237,7 @@ void WriteCont(unsigned char*pbuf, unsigned char lenght)
     Function reads only one register ;
  =======================================================================================================================
 */
-void ReadSingle(unsigned char*pbuf, unsigned char lenght)
+void ReadSingle(unsigned char*pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~*/
 	unsigned char	temp;
@@ -239,7 +246,7 @@ void ReadSingle(unsigned char*pbuf, unsigned char lenght)
 	if ((SPIMODE)==0)
 	{
 		STARTcondition();
-		while(lenght > 0)
+		while(length > 0)
 		{
 			*pbuf = (0x40 |*pbuf); /* address, read, single*/
 			*pbuf = (0x5f &*pbuf);	/* register address*/
@@ -258,7 +265,7 @@ void ReadSingle(unsigned char*pbuf, unsigned char lenght)
 			TRFDirOUT;
 
 			pbuf++;
-			lenght--;
+			length--;
 		}	/* while*/
 
 		STOPcondition();
@@ -275,7 +282,7 @@ void ReadSingle(unsigned char*pbuf, unsigned char lenght)
 
 
 
-	while(lenght > 0)
+	while(length > 0)
 	{
 		*pbuf = (0x40 |*pbuf); /* address, read, single*/
 		*pbuf = (0x5f &*pbuf);	/* register address*/
@@ -306,7 +313,7 @@ void ReadSingle(unsigned char*pbuf, unsigned char lenght)
 		_NOP();
 		*pbuf = UCB0RXBUF;
 		pbuf++;
-		lenght--;
+		length--;
 
 		UCB0CTL0 |= UCCKPH;
 	}//end of while
@@ -325,11 +332,11 @@ void ReadSingle(unsigned char*pbuf, unsigned char lenght)
     specified address upwards. ;
  =======================================================================================================================
 */
-void ReadCont(unsigned char*pbuf, unsigned char lenght)
+void ReadCont(unsigned char*pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~*/
 	unsigned char	j;
-	// unsigned char len1 = lenght;
+	// unsigned char len1 = length;
 
 	/*~~~~~~~~~~~~~~*/
 	if ((SPIMODE)==0) //Parallel Mode
@@ -345,7 +352,7 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 		/*
 		* TRFWrite = 0x00;
 		*/
-		while(lenght > 0)
+		while(length > 0)
 		{
 			clkON;
 
@@ -360,7 +367,7 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 			*/
 			clkOFF;
 			pbuf++;
-			lenght--;
+			length--;
 		}						/* while*/
 
 		STOPcont();
@@ -372,8 +379,8 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 		/*********************************/
 		/* Start of Hardware SPI Mode*/
 		/*********************************/
-		// lenght=lenght+2;
-		//  unsigned char len1 = lenght;
+		// length=length+2;
+		//  unsigned char len1 = length;
 
 		SlaveSelectLOW; //Start SPI Mode
 		*pbuf = (0x60 |*pbuf); /* address, read, continous*/
@@ -391,7 +398,7 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 		//added length clause - May 9th 2007
 		if(*pbuf != 0x6C)//execute only when IRQRead is not called
 		{
-			if (lenght != 0x1F)
+			if (length != 0x1F)
 			{
 				for (j=0;j<2;j++)
 				{
@@ -409,7 +416,7 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 			}
 		}
 
-		while(lenght > 0)
+		while(length > 0)
 		{
 			while (!(IFG2 & UCB0TXIFG))
 			{
@@ -423,7 +430,7 @@ void ReadCont(unsigned char*pbuf, unsigned char lenght)
 			_NOP();
 			*pbuf = UCB0RXBUF;
 			pbuf++;
-			lenght--;
+			length--;
 		}
 		UCB0CTL0 |= UCCKPH;
 		SlaveSelectHIGH; //Stop SPI Mode
@@ -487,19 +494,19 @@ void DirectCommand(unsigned char*pbuf)
     Function used for direct writing to reader chip ;
  =======================================================================================================================
 */
-void RAWwrite(unsigned char*pbuf, unsigned char lenght)
+void RAWwrite(unsigned char*pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~*/
 	if ((SPIMODE)==0) //Parallel Mode
 	{
 		STARTcondition();
-		while(lenght > 0)
+		while(length > 0)
 		{
 			TRFWrite =*pbuf;	/* send command*/
 			clkON;
 			clkOFF;
 			pbuf++;
-			lenght--;
+			length--;
 		}						/* while*/
 
 		STOPcont();
@@ -515,7 +522,7 @@ void RAWwrite(unsigned char*pbuf, unsigned char lenght)
 		SlaveSelectLOW; //Start SPI Mode
 
 
-		while(lenght > 0)
+		while(length > 0)
 		{
 			// USCI_B0 TX buffer ready?
 			while (!(IFG2 & UCB0TXIFG))
@@ -529,7 +536,7 @@ void RAWwrite(unsigned char*pbuf, unsigned char lenght)
 			temp=UCB0RXBUF;
 
 			pbuf++;
-			lenght--;
+			length--;
 
 		}						/* while*/
 		// SPIStartCondition(); //SCLK High
@@ -605,12 +612,12 @@ void DirectMode(void)
     Send a specified number of bytes from buffer to host ;
  =======================================================================================================================
 */
-void Response(unsigned char*pbuf, unsigned char lenght)
+void Response(unsigned char*pbuf, unsigned char length)
 {
 	/*
 	* char msg[40];
 	*/
-	while(lenght > 0)
+	while(length > 0)
 	{
 		/*
 		sprintf(msg, "[%x]",*pbuf++);
@@ -620,7 +627,7 @@ void Response(unsigned char*pbuf, unsigned char lenght)
 		Put_byte(*pbuf);
 		kputchar(']');
 		pbuf++;
-		lenght--;
+		length--;
 	}
 
 	put_crlf();
@@ -697,6 +704,8 @@ void InterruptHandlerReader(unsigned char*Register)
 	else if(*Register == BIT7)
 	{					/* TX complete*/
 		i_reg = 0x00;
+
+
 		*Register = Reset;			/* reset the FIFO after TX*/
 		DirectCommand(Register);
 #if DBG
@@ -774,7 +783,7 @@ void InterruptHandlerReader(unsigned char*Register)
 		ReadCont(&buf[RXTXstate],*Register);
 		RXTXstate = RXTXstate +*Register;
 
-		*Register = TXLenghtByte2;					/* determine if there are broken bytes*/
+		*Register = TXlengthByte2;					/* determine if there are broken bytes*/
 		//       ReadSingle(Register, 1);					/* determine the number of bits*/
 		ReadCont(Register, 1);
 
@@ -828,7 +837,7 @@ void InterruptHandlerReader(unsigned char*Register)
 				ReadCont(&buf[RXTXstate],*Register);
 				RXTXstate = RXTXstate +*Register;
 
-				*Register = TXLenghtByte2;					/* determine if there are broken bytes*/
+				*Register = TXlengthByte2;					/* determine if there are broken bytes*/
 				ReadSingle(Register, 1);					/* determine the number of bits*/
 				//ReadCont(Register, 1);
 
@@ -963,12 +972,11 @@ interrupt (PORT2_VECTOR) Port_B(void)		/* interrupt handler*/
 		if(*Register == 0xA0)
 		{	
 			/* TX active and only 3 bytes left in FIFO*/
-			goto FINISH;
+			break;
 		}
 		InterruptHandlerReader(&Register[0]);
 	} while((irqPORT & irqPIN) == irqPIN);
 
-FINISH:
 	__low_power_mode_off_on_exit();
 }
 

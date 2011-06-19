@@ -14,8 +14,8 @@
 #include "globals.h"
 
 
-void BeginRound(unsigned char MaskLenght, unsigned char *Mask, unsigned char slotNo);
-unsigned char RequestEPC(unsigned char *pbuf, unsigned char lenght);
+void BeginRound(unsigned char Masklength, unsigned char *Mask, unsigned char slotNo);
+unsigned char RequestEPC(unsigned char *pbuf, unsigned char length);
 void CSScommand(void);
 #endif
 

@@ -24,12 +24,12 @@
 
 //function definitions--------------------------------------
 
-void SPIWriteSingle(unsigned char *pbuf, unsigned char lenght);
-void SPIWriteCont(unsigned char *pbuf, unsigned char lenght);
-void SPIReadSingle(unsigned char *pbuf, unsigned char lenght);
-void SPIReadCont(unsigned char *pbuf, unsigned char lenght);
+void SPIWriteSingle(unsigned char *pbuf, unsigned char length);
+void SPIWriteCont(unsigned char *pbuf, unsigned char length);
+void SPIReadSingle(unsigned char *pbuf, unsigned char length);
+void SPIReadCont(unsigned char *pbuf, unsigned char length);
 void SPIDirectCommand(unsigned char *pbuf);
-void SPIRAWwrite(unsigned char *pbuf, unsigned char lenght);
+void SPIRAWwrite(unsigned char *pbuf, unsigned char length);
 void SPIDirectMode(void);
 void SERset(void);
 /*void USARTset(void);*/

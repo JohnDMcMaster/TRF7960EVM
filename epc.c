@@ -4,19 +4,19 @@
  =======================================================================================================================
     This is the inventory function for the EPC protocol. // ;
     It searches the tags in the field starting with Mask // ;
-    lenght 0 - sending out no mask. A mask can be added if// ;
+    length 0 - sending out no mask. A mask can be added if// ;
     a collision is detected within a response. The mask is// ;
-    bit oriented, the mask lenght is the number of bits in// ;
+    bit oriented, the mask length is the number of bits in// ;
     the mask that is used. // ;
  =======================================================================================================================
  */
-void BeginRound(unsigned char MaskLenght, unsigned char *Mask, unsigned char slotNo)
+void BeginRound(unsigned char Masklength, unsigned char *Mask, unsigned char slotNo)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	ByteNumber, command, i = 0, j = 0;
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-	ByteNumber = 3 + (MaskLenght >> 3); /* nuber of complete bytes */
+	ByteNumber = 3 + (Masklength >> 3); /* nuber of complete bytes */
 
 	buf[0] = 0x8f;
 	buf[1] = 0x91;						/* send with CRC */
@@ -24,11 +24,11 @@ void BeginRound(unsigned char MaskLenght, unsigned char *Mask, unsigned char slo
 	buf[3] = (ByteNumber >> 4);
 	buf[4] = (ByteNumber << 4);			/* there are no broken bytes */
 	buf[5] = 0x30;						/* command code */
-	buf[6] = MaskLenght;
-	if(MaskLenght > 0)
+	buf[6] = Masklength;
+	if(Masklength > 0)
 	{
-		for(i = 0; i < (MaskLenght >> 3); i++) buf[i + 7] = *(Mask + i);
-		if((MaskLenght & 0x07) != 0x00) /* add one byte for broken byte */
+		for(i = 0; i < (Masklength >> 3); i++) buf[i + 7] = *(Mask + i);
+		if((Masklength & 0x07) != 0x00) /* add one byte for broken byte */
 			buf[i + 8] = *(Mask + i + 1);
 	}						/* if */
 
@@ -92,13 +92,13 @@ void BeginRound(unsigned char MaskLenght, unsigned char *Mask, unsigned char slo
     the delayed send command.
  =======================================================================================================================
  */
-unsigned char RequestEPC(unsigned char *pbuf, unsigned char lenght)
+unsigned char RequestEPC(unsigned char *pbuf, unsigned char length)
 {
 	/*~~~~~~~~~~~~~~~~~~~~~*/
 	unsigned char	index, j;
 	/*~~~~~~~~~~~~~~~~~~~~~*/
 
-	RXTXstate = lenght; /* RXTXstate global wariable is the main transmit counter */
+	RXTXstate = length; /* RXTXstate global wariable is the main transmit counter */
 
 	*pbuf = 0x8f;
 	*(pbuf + 1) = 0x91; /* buffer setup for FIFO writing */
@@ -106,9 +106,9 @@ unsigned char RequestEPC(unsigned char *pbuf, unsigned char lenght)
 	*(pbuf + 3) = RXTXstate >> 4;
 	*(pbuf + 4) = RXTXstate << 4;
 
-	if(lenght > 12) lenght = 12;
+	if(length > 12) length = 12;
 
-	RAWwrite(pbuf, lenght + 5);		/* send the request using RAW writing */
+	RAWwrite(pbuf, length + 5);		/* send the request using RAW writing */
 
 	/* Write 12 bytes the first time you write to FIFO */
 	irqCLR;							/* PORT2 interrupt flag clear */
@@ -124,7 +124,7 @@ unsigned char RequestEPC(unsigned char *pbuf, unsigned char lenght)
 		LPM0;						/* enter low power mode and exit on interrupt */
 		if(RXTXstate > 9)
 		{							/* the number of unsent bytes is in the RXTXstate global */
-			lenght = 10;			/* count variable has to be 10 : 9 bytes for FIFO and 1 address */
+			length = 10;			/* count variable has to be 10 : 9 bytes for FIFO and 1 address */
 		}
 		else if(RXTXstate < 1)
 		{
@@ -132,11 +132,11 @@ unsigned char RequestEPC(unsigned char *pbuf, unsigned char lenght)
 		}
 		else
 		{
-			lenght = RXTXstate + 1; /* all data has been sent out */
+			length = RXTXstate + 1; /* all data has been sent out */
 		}						/* if */
 
 		buf[index - 1] = FIFO;	/* writes 9 or less bytes to FIFO for transmitting */
-		WriteCont(&buf[index - 1], lenght);
+		WriteCont(&buf[index - 1], length);
 		RXTXstate = RXTXstate - 9;	/* write 9 bytes to FIFO */
 		index = index + 9;
 	}						/* while */

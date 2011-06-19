@@ -1,3 +1,10 @@
+/*
+trf7960evm port
+Original code Copyright (C) 2006-2007 Texas Instruments, Inc.
+Modifications copyright 2011 John McMaster <JohnDMcMaster@gmail.com>
+See COPYING for details
+*/
+
 #ifndef PARALLEL_H
 #define PARALLEL_H
 //-----------------------------------------------------------
@@ -45,14 +52,14 @@ void PARset(void);
 void STOPcondition(void);
 void STOPcont(void);
 void STARTcondition(void);
-void WriteSingle(unsigned char *pbuf, unsigned char lenght);
-void WriteCont(unsigned char *pbuf, unsigned char lenght);
-void ReadSingle(unsigned char *pbuf, unsigned char lenght);
-void ReadCont(unsigned char *pbuf, unsigned char lenght);
+void WriteSingle(unsigned char *pbuf, unsigned char length);
+void WriteCont(unsigned char *pbuf, unsigned char length);
+void ReadSingle(unsigned char *pbuf, unsigned char length);
+void ReadCont(unsigned char *pbuf, unsigned char length);
 void DirectCommand(unsigned char *pbuf);
-void RAWwrite(unsigned char *pbuf, unsigned char lenght);
+void RAWwrite(unsigned char *pbuf, unsigned char length);
 void DirectMode(void);
-void Response(unsigned char *pbuf, unsigned char lenght);
+void Response(unsigned char *pbuf, unsigned char length);
 void InterruptHandlerReader(unsigned char *Register);
 void InterruptHandlerNFC(unsigned char Register);
 void InterruptHandlerNFCtarget(unsigned char Register);

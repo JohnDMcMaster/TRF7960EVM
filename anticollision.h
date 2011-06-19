@@ -13,8 +13,8 @@
 
 void EnableSlotCounter(void);
 void DisableSlotCounter(void);
-void InventoryRequest(unsigned char *mask, unsigned char lenght);
-unsigned char RequestCommand(unsigned char *pbuf, unsigned char lenght, unsigned char brokenBits, char noCRC);
+void InventoryRequest(unsigned char *mask, unsigned char length);
+unsigned char RequestCommand(unsigned char *pbuf, unsigned char length, unsigned char brokenBits, char noCRC);
 
 #endif
 

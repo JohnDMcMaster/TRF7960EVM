@@ -1,3 +1,10 @@
+/*
+trf7960evm port
+Original code Copyright (C) 2006-2007 Texas Instruments, Inc.
+Modifications copyright 2011 John McMaster <JohnDMcMaster@gmail.com>
+See COPYING for details
+*/
+
 #ifndef HARDWARE_H
 #define HARDWARE_H
 //----------------------------------------------//
@@ -91,7 +98,7 @@
 #define ISO14443Aoptions	0x03
 #define TXtimerEPChigh		0x04
 #define TXtimerEPClow		0x05
-#define TXPulseLenghtControl	0x06
+#define TXPulselengthControl	0x06
 #define RXNoResponseWaitTime	0x07
 #define RXWaitTime		0x08
 #define ModulatorControl	0x09
@@ -108,8 +115,8 @@
 #define TestSetting1		0x1A
 #define TestSetting2		0x1B
 #define FIFOStatus		0x1C
-#define TXLenghtByte1		0x1D
-#define TXLenghtByte2		0x1E
+#define TXlengthByte1		0x1D
+#define TXlengthByte2		0x1E
 #define FIFO			0x1F
 
 //Reader commands-------------------------------------------

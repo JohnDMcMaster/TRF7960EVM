@@ -1,3 +1,9 @@
+/*
+trf7960evm
+Original code Copyright (C) 2006-2007 Texas Instruments, Inc.
+Modifications copyright 2011 John McMaster <JohnDMcMaster@gmail.com>
+See COPYING for details
+*/
 
 //Global variables-------------------------------
 //
